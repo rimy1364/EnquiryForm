@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enquiry Form - Get in Touch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #3b82f6;
+      --accent-dark: #1d4ed8;
+      --black: #111111;
+      --input-bg: #f9fafb;
+      --error: #ef4444;
+      --success: #10b981;
+      --radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LAYOUT ── */
+    .shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--border);
+      z-index: 100;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── HEADER ── */
+    .form-header {
+      position: fixed;
+      top: 3px; left: 0; right: 0;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 34px; height: 34px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+    }
+
+    .logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--black);
+      letter-spacing: -0.3px;
+    }
+
+    .page-counter {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    /* ── PAGES ── */
+    .pages-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 100px 24px 40px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page.active {
+      display: flex;
+      animation: fadeSlideIn 0.3s ease;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── PAGE 1: WELCOME ── */
+    .welcome-logo {
+      width: 72px; height: 72px;
+      background: var(--accent);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 24px rgba(59,130,246,0.2);
+    }
+
+    .welcome-title {
+      font-size: clamp(26px, 6vw, 34px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      color: var(--black);
+    }
+
+    .welcome-subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .welcome-desc {
+      font-size: 16px;
+      color: #374151;
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    .welcome-note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      padding: 14px 16px;
+      background: var(--input-bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+
+    .welcome-note::before {
+      content: '🔒 ';
+    }
+
+    /* ── QUESTION PAGES ── */
+    .q-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .q-title {
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .q-hint {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* ── INPUTS ── */
+    .input-field {
+      width: 100%;
+      padding: 16px 18px;
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--black);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.06);
+      background: #fff;
+    }
+
+    .input-field::placeholder { color: #c0c0c0; }
+
+    .input-field.error { border-color: var(--error); }
+
+    textarea.input-field {
+      resize: none;
+      height: 110px;
+      line-height: 1.6;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* ── CHOICE CHIPS ── */
+    .chips {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--black);
+    }
+
+    .chip:hover {
+      border-color: #d1d5db;
+      background: #f3f4f6;
+    }
+
+    .chip.selected {
+      border-color: var(--accent);
+      background: rgba(59,130,246,0.08);
+    }
+
+    .chip-key {
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      flex-shrink: 0;
+      background: #fff;
+      transition: all 0.15s;
+    }
+
+    .chip.selected .chip-key {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .chip-emoji { font-size: 18px; flex-shrink: 0; }
+
+    /* ── RADIO ROW ── */
+    .radio-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .radio-chip {
+      flex: 1;
+      min-width: 90px;
+      padding: 14px 10px;
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: center;
+      user-select: none;
+    }
+
+    .radio-chip:hover { border-color: #d1d5db; color: var(--black); }
+
+    .radio-chip.selected {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── ERROR MSG ── */
+    .err-msg {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 8px;
+      display: none;
+    }
+
+    .err-msg.show { display: block; }
+
+    /* ── BUTTONS ── */
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 16px 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+      box-shadow: 0 2px 12px rgba(59,130,246,0.2);
+    }
+
+    .btn-next:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(59,130,246,0.3);
+    }
+
+    .btn-next:active { transform: translateY(0); }
+
+    .btn-next:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .btn-next svg {
+      transition: transform 0.2s;
+    }
+
+    .btn-next:hover:not(:disabled) svg { transform: translateX(3px); }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 8px 0;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+
+    .btn-back:hover { color: var(--black); }
+
+    .btn-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 24px;
+      gap: 4px;
+    }
+
+    /* ── THANK YOU ── */
+    .thankyou-icon {
+      width: 80px; height: 80px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 28px;
+      animation: popIn 0.5s cubic-bezier(.175,.885,.32,1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .thankyou-title {
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+
+    .thankyou-msg {
+      font-size: 16px;
+      color: #374151;
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 32px;
+    }
+
+    .thankyou-highlight {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .thankyou-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+      margin-bottom: 32px;
+    }
+
+    .thankyou-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .thankyou-card-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .thankyou-card p {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    .thankyou-card strong { color: var(--black); }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── FOOTER ── */
+    .form-footer {
+      text-align: center;
+      font-size: 12px;
+      color: #c0c0c0;
+      padding: 20px 24px 28px;
+    }
+
+    @media (max-width: 480px) {
+      .page { padding: 88px 20px 32px; }
+      .input-row { grid-template-columns: 1fr; }
+      .radio-row { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- HEADER -->
+<div class="form-header">
+  <div class="brand-logo">
+    <div class="logo-mark">📋</div>
+    <div class="logo-text">Enquiry Form</div>
+  </div>
+  <div class="page-counter" id="pageCounter"></div>
+</div>
+
+<div class="shell">
+<div class="pages-container">
+
+  <!-- ══ PAGE 1: WELCOME ══ -->
+  <div class="page active" id="page-1">
+    <div class="welcome-logo">👋</div>
+    <div class="welcome-subtitle">Welcome</div>
+    <h1 class="welcome-title">Get In Touch</h1>
+    <p class="welcome-desc">
+      We'd love to hear from you. Fill out this quick enquiry form and we'll get back to you shortly.
+    </p>
+    <p class="welcome-desc" style="margin-top:4px">
+      This <strong>2-minute form</strong> helps us understand your needs better.
+    </p>
+    <p class="welcome-note">Your details are safe with us and will only be used for communication.</p>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="goTo(2)">
+        Get Started
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 2: NAME ══ -->
+  <div class="page" id="page-2">
+    <div class="q-label">Question 1 of 5</div>
+    <h2 class="q-title">What's your full name? 👤</h2>
+    <p class="q-hint">We'll use this to personalize our communication.</p>
+    <input class="input-field" id="inp-name" type="text" placeholder="e.g. John Doe" autocomplete="name">
+    <div class="err-msg" id="err-name">Please enter your name</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(2, 3)">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 3: WHATSAPP ══ -->
+  <div class="page" id="page-3">
+    <div class="q-label">Question 2 of 5</div>
+    <h2 class="q-title">Your WhatsApp number? 📱</h2>
+    <p class="q-hint">We'll send you a message here once we receive your enquiry.</p>
+    <input class="input-field" id="inp-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel">
+    <div class="err-msg" id="err-phone">Please enter a valid WhatsApp number</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(3, 4)">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 4: EMAIL ══ -->
+  <div class="page" id="page-4">
+    <div class="q-label">Question 3 of 5</div>
+    <h2 class="q-title">Your Email Address 📧</h2>
+    <p class="q-hint">In case we need to reach you via email.</p>
+    <input class="input-field" id="inp-email" type="email" placeholder="your.email@example.com" autocomplete="email">
+    <div class="err-msg" id="err-email">Please enter a valid email</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(4, 5)">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(3)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 5: MESSAGE ══ -->
+  <div class="page" id="page-5">
+    <div class="q-label">Question 4 of 5</div>
+    <h2 class="q-title">What can we help you with? 💬</h2>
+    <p class="q-hint">Tell us about your enquiry in a few words.</p>
+    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
+    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(5, 6)">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(4)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 6: COMPANY ══ -->
+  <div class="page" id="page-6">
+    <div class="q-label">Question 5 of 5</div>
+    <h2 class="q-title">Any additional details? 🏢</h2>
+    <p class="q-hint">Company name, location, or anything else that helps us serve you better.</p>
+    <input class="input-field" id="inp-company" type="text" placeholder="e.g. Your Company Name (Optional)">
+    <div class="btn-actions">
+      <button class="btn-next" onclick="submitForm()" id="submitBtn" style="background:var(--accent);min-width:180px">
+        Submit Enquiry ✓
+      </button>
+      <button class="btn-back" onclick="goTo(5)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 7: THANK YOU ══ -->
+  <div class="page" id="page-7">
+    <div class="thankyou-icon">✅</div>
+    <h2 class="thankyou-title">Thank You!</h2>
+    <p class="thankyou-msg">
+      Your enquiry has been received. You'll get a <span class="thankyou-highlight">WhatsApp message</span> shortly with confirmation.
+    </p>
+    <div class="thankyou-cards">
+      <div class="thankyou-card">
+        <div class="thankyou-card-icon">📱</div>
+        <p><strong>Check your WhatsApp</strong> — We'll send you a message within the next few minutes</p>
+      </div>
+      <div class="thankyou-card">
+        <div class="thankyou-card-icon">⏰</div>
+        <p><strong>Keep an eye on your inbox</strong> — We typically respond within 24 hours</p>
+      </div>
+      <div class="thankyou-card">
+        <div class="thankyou-card-icon">💡</div>
+        <p><strong>Got questions?</strong> Feel free to reach out directly via WhatsApp</p>
+      </div>
+    </div>
+    <button class="btn-next" onclick="window.location.href='/'" style="width:100%;justify-content:center;">
+      Submit Another Enquiry
+    </button>
+  </div>
+
+</div><!-- /pages-container -->
+
+<div class="form-footer" id="formFooter">
+  Powered by <strong>Enquiry Form</strong> · Your data is secure 🔒
+</div>
+</div><!-- /shell -->
+
+<script>
+  const TOTAL_PAGES = 5;
+  let currentPage = 1;
+
+  const state = {
+    name: '',
+    phone: '',
+    email: '',
+    message: '',
+    company: ''
+  };
+
+  // ── NAVIGATION ──
+  function goTo(n) {
+    document.getElementById('page-' + currentPage).classList.remove('active');
+    currentPage = n;
+    const next = document.getElementById('page-' + n);
+    next.classList.add('active');
+    next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    updateProgress();
+    updateCounter();
+  }
+
+  function updateProgress() {
+    const pct = currentPage === 7 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  function updateCounter() {
+    const el = document.getElementById('pageCounter');
+    if (currentPage === 1 || currentPage === 7) {
+      el.textContent = '';
+    } else {
+      el.textContent = 'Question ' + (currentPage - 1) + ' of 5';
+    }
+  }
+
+  // ── VALIDATION ──
+  function validateAndGo(from, to) {
+    let valid = true;
+
+    if (from === 2) {
+      const v = document.getElementById('inp-name').value.trim();
+      if (!v) { showErr('name'); valid = false; }
+      else state.name = v;
+    }
+    if (from === 3) {
+      const v = document.getElementById('inp-phone').value.trim();
+      if (!v || v.length < 7) { showErr('phone'); valid = false; }
+      else state.phone = v;
+    }
+    if (from === 4) {
+      const v = document.getElementById('inp-email').value.trim();
+      if (!v || !v.includes('@')) { showErr('email'); valid = false; }
+      else state.email = v;
+    }
+    if (from === 5) {
+      const v = document.getElementById('inp-message').value.trim();
+      if (!v) { showErr('message'); valid = false; }
+      else state.message = v;
+    }
+
+    if (valid) goTo(to);
+  }
+
+  function showErr(id) {
+    const el = document.getElementById('err-' + id);
+    if (el) el.classList.add('show');
+    const inp = document.getElementById('inp-' + id);
+    if (inp) inp.classList.add('error');
+  }
+
+  // clear error on input
+  document.querySelectorAll('.input-field').forEach(inp => {
+    inp.addEventListener('input', function() {
+      this.classList.remove('error');
+      const id = this.id.replace('inp-', '');
+      const err = document.getElementById('err-' + id);
+      if (err) err.classList.remove('show');
+    });
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && this.tagName !== 'TEXTAREA') {
+        const page = this.closest('.page');
+        const btn = page.querySelector('.btn-next');
+        if (btn) btn.click();
+      }
+    });
+  });
+
+  // ── SUBMIT ──
+  async function submitForm() {
+    state.company = document.getElementById('inp-company').value.trim();
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+    try {
+      const response = await fetch('/api/submit-enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        goTo(7);
+      } else {
+        alert('Error: ' + (data.error || 'Failed to submit enquiry'));
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit Enquiry ✓';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Network error. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Submit Enquiry ✓';
+    }
+  }
+
+  // init
+  updateProgress();
+  updateCounter();
+</script>
+</body>
+</html>
