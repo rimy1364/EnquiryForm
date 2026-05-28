@@ -563,7 +563,7 @@
 
   <!-- ══ PAGE 3: CONTACT DETAILS ══ -->
   <div class="page" id="page-3">
-    <div class="q-label">Question 2 of 4</div>
+    <div class="q-label">Question 2 of 5</div>
     <h2 class="q-title">Your contact details</h2>
     <p class="q-hint">Provide your WhatsApp number and email so we can reach you quickly.</p>
     <input class="input-field" id="inp-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel" style="margin-bottom:16px;">
@@ -579,13 +579,28 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 4: MESSAGE ══ -->
+  <!-- ══ PAGE 4: A BIT ABOUT YOU ══ -->
   <div class="page" id="page-4">
-    <div class="q-label">Question 3 of 4</div>
-    <h2 class="q-title">What can we help you with? 💬</h2>
-    <p class="q-hint">Tell us about your enquiry in a few words.</p>
-    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
-    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="q-label">Question 3 of 5</div>
+    <h2 class="q-title">A bit about you</h2>
+    <p class="q-hint">Helps Prateek personalise your plan from the start.</p>
+    <div class="input-row" style="margin-bottom:20px">
+      <div>
+        <input class="input-field" id="inp-age" type="number" placeholder="Age" min="14" max="80">
+        <div class="err-msg" id="err-age">Enter a valid age</div>
+      </div>
+      <div>
+        <input class="input-field" id="inp-city" type="text" placeholder="City (e.g. Delhi)">
+        <div class="err-msg" id="err-city">Enter your city</div>
+      </div>
+    </div>
+    <p style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Gender</p>
+    <div class="radio-row" id="gender-row">
+      <div class="radio-chip" onclick="selectRadio('gender', this)">Male</div>
+      <div class="radio-chip" onclick="selectRadio('gender', this)">Female</div>
+      <div class="radio-chip" onclick="selectRadio('gender', this)">Other</div>
+    </div>
+    <div class="err-msg" id="err-gender">Please select your gender</div>
     <div class="btn-actions">
       <button class="btn-next" onclick="validateAndGo(4, 5)">
         Next
@@ -595,9 +610,25 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 5: COMPANY ══ -->
+  <!-- ══ PAGE 5: MESSAGE ══ -->
   <div class="page" id="page-5">
-    <div class="q-label">Question 4 of 4</div>
+    <div class="q-label">Question 4 of 5</div>
+    <h2 class="q-title">What can we help you with? 💬</h2>
+    <p class="q-hint">Tell us about your enquiry in a few words.</p>
+    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
+    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(5, 6)">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(4)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 6: COMPANY ══ -->
+  <div class="page" id="page-6">
+    <div class="q-label">Question 5 of 5</div>
     <h2 class="q-title">Any additional details? 🏢</h2>
     <p class="q-hint">Company name, location, or anything else that helps us serve you better.</p>
     <input class="input-field" id="inp-company" type="text" placeholder="e.g. Your Company Name (Optional)">
@@ -605,12 +636,12 @@
       <button class="btn-next" onclick="submitForm()" id="submitBtn" style="background:var(--accent);min-width:180px">
         Submit Enquiry ✓
       </button>
-      <button class="btn-back" onclick="goTo(4)">← Back</button>
+      <button class="btn-back" onclick="goTo(5)">← Back</button>
     </div>
   </div>
 
-  <!-- ══ PAGE 6: THANK YOU ══ -->
-  <div class="page" id="page-6">
+  <!-- ══ PAGE 7: THANK YOU ══ -->
+  <div class="page" id="page-7">
     <div class="thankyou-icon">✅</div>
     <h2 class="thankyou-title">Thank You!</h2>
     <p class="thankyou-msg">
@@ -643,13 +674,16 @@
 </div><!-- /shell -->
 
 <script>
-  const TOTAL_PAGES = 4;
+  const TOTAL_PAGES = 5;
   let currentPage = 1;
 
   const state = {
     name: '',
     phone: '',
     email: '',
+    age: '',
+    city: '',
+    gender: '',
     message: '',
     company: ''
   };
@@ -666,16 +700,16 @@
   }
 
   function updateProgress() {
-    const pct = currentPage === 6 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
+    const pct = currentPage === 7 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
   }
 
   function updateCounter() {
     const el = document.getElementById('pageCounter');
-    if (currentPage === 1 || currentPage === 6) {
+    if (currentPage === 1 || currentPage === 7) {
       el.textContent = '';
     } else {
-      el.textContent = 'Question ' + (currentPage - 1) + ' of 4';
+      el.textContent = 'Question ' + (currentPage - 1) + ' of 5';
     }
   }
 
@@ -697,6 +731,15 @@
       else state.email = emailValue;
     }
     if (from === 4) {
+      const age = document.getElementById('inp-age').value.trim();
+      const city = document.getElementById('inp-city').value.trim();
+      if (!age || age < 14 || age > 80) { showErr('age'); valid = false; }
+      else state.age = age;
+      if (!city) { showErr('city'); valid = false; }
+      else state.city = city;
+      if (!state.gender) { showErr('gender'); valid = false; }
+    }
+    if (from === 5) {
       const v = document.getElementById('inp-message').value.trim();
       if (!v) { showErr('message'); valid = false; }
       else state.message = v;
@@ -710,6 +753,14 @@
     if (el) el.classList.add('show');
     const inp = document.getElementById('inp-' + id);
     if (inp) inp.classList.add('error');
+  }
+
+  function selectRadio(group, el) {
+    el.parentElement.querySelectorAll('.radio-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    state[group] = el.textContent;
+    const err = document.getElementById('err-' + group);
+    if (err) err.classList.remove('show');
   }
 
   // clear error on input
