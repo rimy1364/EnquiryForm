@@ -121,7 +121,8 @@ async function appendToGoogleSheet(row) {
   const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
 
   if (!spreadsheetId) {
-    throw new Error('GOOGLE_SHEET_ID is not configured');
+    console.log('⚠️ Google Sheets disabled: GOOGLE_SHEET_ID not configured');
+    return;
   }
 
   const credentials = getGoogleServiceAccountCredentials();
