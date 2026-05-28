@@ -547,7 +547,7 @@
 
   <!-- ══ PAGE 2: NAME ══ -->
   <div class="page" id="page-2">
-    <div class="q-label">Question 1 of 5</div>
+    <div class="q-label">Question 1 of 6</div>
     <h2 class="q-title">What's your full name? 👤</h2>
     <p class="q-hint">We'll use this to personalize our communication.</p>
     <input class="input-field" id="inp-name" type="text" placeholder="e.g. John Doe" autocomplete="name">
@@ -563,7 +563,7 @@
 
   <!-- ══ PAGE 3: CONTACT DETAILS ══ -->
   <div class="page" id="page-3">
-    <div class="q-label">Question 2 of 5</div>
+    <div class="q-label">Question 2 of 6</div>
     <h2 class="q-title">Your contact details</h2>
     <p class="q-hint">Provide your WhatsApp number and email so we can reach you quickly.</p>
     <input class="input-field" id="inp-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel" style="margin-bottom:16px;">
@@ -581,7 +581,7 @@
 
   <!-- ══ PAGE 4: A BIT ABOUT YOU ══ -->
   <div class="page" id="page-4">
-    <div class="q-label">Question 3 of 5</div>
+    <div class="q-label">Question 3 of 6</div>
     <h2 class="q-title">A bit about you</h2>
     <p class="q-hint">Helps Prateek personalise your plan from the start.</p>
     <div class="input-row" style="margin-bottom:20px">
@@ -612,7 +612,7 @@
 
   <!-- ══ PAGE 5: GOAL SELECTION ══ -->
   <div class="page" id="page-5">
-    <div class="q-label">Question 4 of 5</div>
+    <div class="q-label">Question 4 of 6</div>
     <h2 class="q-title">What's your #1 goal right now?</h2>
     <p class="q-hint">Pick the one that matters most to you.</p>
     <div class="chips" id="goal-chips">
@@ -652,24 +652,61 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 6: MESSAGE ══ -->
+  <!-- ══ PAGE 6: TRAINING EXPERIENCE ══ -->
   <div class="page" id="page-6">
-    <div class="q-label">Question 5 of 5</div>
-    <h2 class="q-title">What can we help you with? 💬</h2>
-    <p class="q-hint">Tell us about your enquiry in a few words.</p>
-    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
-    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="q-label">Question 5 of 6</div>
+    <h2 class="q-title">How long have you been training?</h2>
+    <p class="q-hint">Be honest — there’s no wrong answer!</p>
+    <div class="chips" id="training-chips">
+      <div class="chip" onclick="selectChip('trainingExperience', this)" data-val="0-6 months">
+        <div class="chip-key">A</div>
+        <span class="chip-emoji">🌱</span>
+        <span>Just starting out (0–6 months)</span>
+      </div>
+      <div class="chip" onclick="selectChip('trainingExperience', this)" data-val="6 months - 2 years">
+        <div class="chip-key">B</div>
+        <span class="chip-emoji">📈</span>
+        <span>Some experience (6 months – 2 years)</span>
+      </div>
+      <div class="chip" onclick="selectChip('trainingExperience', this)" data-val="2+ years">
+        <div class="chip-key">C</div>
+        <span class="chip-emoji">🏆</span>
+        <span>Trained consistently (2+ years)</span>
+      </div>
+      <div class="chip" onclick="selectChip('trainingExperience', this)" data-val="returning after a break">
+        <div class="chip-key">D</div>
+        <span class="chip-emoji">🔄</span>
+        <span>Returning after a long break</span>
+      </div>
+    </div>
+    <div class="err-msg" id="err-trainingExperience">Please select one option</div>
     <div class="btn-actions">
-      <button class="btn-next" onclick="submitForm()">
-        Submit Enquiry ✓
+      <button class="btn-next" onclick="validateAndGo(6, 7)">
+        Next
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
       <button class="btn-back" onclick="goTo(5)">← Back</button>
     </div>
   </div>
 
-  <!-- ══ PAGE 7: THANK YOU ══ -->
+  <!-- ══ PAGE 7: MESSAGE ══ -->
   <div class="page" id="page-7">
+    <div class="q-label">Question 6 of 6</div>
+    <h2 class="q-title">Any injuries or physical limitations? 🩺</h2>
+    <p class="q-hint">This helps Prateek design a safe, effective program for you.</p>
+    <textarea class="input-field" id="inp-message" placeholder="Describe any injuries, pain, or limitations..."></textarea>
+    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(7, 8)">
+        Submit Enquiry ✓
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(6)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 8: THANK YOU ══ -->
+  <div class="page" id="page-8">
     <div class="thankyou-icon">✅</div>
     <h2 class="thankyou-title">Thank You!</h2>
     <p class="thankyou-msg">
@@ -702,7 +739,7 @@
 </div><!-- /shell -->
 
 <script>
-  const TOTAL_PAGES = 5;
+  const TOTAL_PAGES = 6;
   let currentPage = 1;
 
   const state = {
@@ -713,6 +750,7 @@
     city: '',
     gender: '',
     goal: '',
+    trainingExperience: '',
     message: ''
   };
 
@@ -728,16 +766,16 @@
   }
 
   function updateProgress() {
-    const pct = currentPage === 7 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
+    const pct = currentPage === 8 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
   }
 
   function updateCounter() {
     const el = document.getElementById('pageCounter');
-    if (currentPage === 1 || currentPage === 7) {
+    if (currentPage === 1 || currentPage === 8) {
       el.textContent = '';
     } else {
-      el.textContent = 'Question ' + (currentPage - 1) + ' of 5';
+      el.textContent = 'Question ' + (currentPage - 1) + ' of 6';
     }
   }
 
@@ -771,12 +809,18 @@
       if (!state.goal) { showErr('goal'); valid = false; }
     }
     if (from === 6) {
+      if (!state.trainingExperience) { showErr('trainingExperience'); valid = false; }
+    }
+    if (from === 7) {
       const v = document.getElementById('inp-message').value.trim();
       if (!v) { showErr('message'); valid = false; }
       else state.message = v;
     }
 
-    if (valid) goTo(to);
+    if (valid) {
+      if (from === 7) submitForm();
+      else goTo(to);
+    }
   }
 
   function showErr(id) {
