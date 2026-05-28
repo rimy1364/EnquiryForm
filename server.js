@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+const { google } = require('googleapis');
 
 const app = express();
 
@@ -40,49 +41,126 @@ function formatWhatsAppMessage(data) {
 // ── SUBMIT FORM ENDPOINT ──
 app.post('/api/submit-enquiry', async (req, res) => {
   try {
-    const { name, phone, age, city, gender, goal, experience, injuries, source } = req.body;
+    const {
+      name,
+      phone,
+      email,
+      age,
+      city,
+      gender,
+      goal,
+      trainingExperience,
+      message,
+      source
+    } = req.body;
 
-    // Validate required fields
-    if (!name || !phone || !age || !city || !gender || !goal || !experience || !source) {
+    const experience = trainingExperience || req.body.experience;
+    const injuries = message || req.body.injuries || '';
+    const sourceValue = source || req.body.source || 'Web form';
+
+    if (!name || !phone || !age || !city || !gender || !goal || !experience) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Store submission
     const submission = {
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
-      ...req.body
+      name,
+      phone,
+      email: email || '',
+      age,
+      city,
+      gender,
+      goal,
+      trainingExperience: experience,
+      message: injuries,
+      source: sourceValue
     };
     submissions.push(submission);
 
-    // Get admin number from environment or use default
+    await appendToGoogleSheet([
+      submission.timestamp,
+      submission.name,
+      submission.phone,
+      submission.email,
+      submission.age,
+      submission.city,
+      submission.gender,
+      submission.goal,
+      submission.trainingExperience,
+      submission.message,
+      submission.source
+    ]);
+
     const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER || '+919092430052';
-
-    // Send WhatsApp message to ADMIN with enquiry details
     if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-      await sendWhatsAppViaTwilio(adminPhone, formatWhatsAppMessage(req.body));
+      await sendWhatsAppViaTwilio(adminPhone, formatWhatsAppMessage(submission));
     }
-
-    // Optionally send WhatsApp via WhatsApp Business API
     if (process.env.WHATSAPP_BUSINESS_API_TOKEN && process.env.WHATSAPP_PHONE_ID) {
-      await sendWhatsAppViaBusinessAPI(adminPhone, formatWhatsAppMessage(req.body));
+      await sendWhatsAppViaBusinessAPI(adminPhone, formatWhatsAppMessage(submission));
     }
 
-    // Log to console
     console.log('✅ Enquiry received:', submission);
+    console.log('📊 Saved enquiry to Google Sheets:', process.env.GOOGLE_SHEET_ID);
     console.log('📱 WhatsApp message sent to admin:', adminPhone);
 
     res.json({
       success: true,
-      message: 'Enquiry submitted successfully! Admin will be notified via WhatsApp.',
+      message: 'Enquiry submitted successfully! Your details have been saved and admin will be notified.',
       submissionId: submission.id
     });
 
   } catch (error) {
     console.error('❌ Error submitting enquiry:', error);
-    res.status(500).json({ error: 'Failed to submit enquiry' });
+    res.status(500).json({ error: error.message || 'Failed to submit enquiry' });
   }
 });
+
+async function appendToGoogleSheet(row) {
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
+
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SHEET_ID is not configured');
+  }
+
+  const credentials = getGoogleServiceAccountCredentials();
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  });
+
+  const sheets = google.sheets({ version: 'v4', auth });
+  await sheets.spreadsheets.values.append({
+    spreadsheetId,
+    range: `${sheetName}!A1`,
+    valueInputOption: 'USER_ENTERED',
+    insertDataOption: 'INSERT_ROWS',
+    requestBody: { values: [row] }
+  });
+}
+
+function getGoogleServiceAccountCredentials() {
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+    try {
+      return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+    } catch (error) {
+      throw new Error('Invalid GOOGLE_SERVICE_ACCOUNT_KEY: must be valid JSON');
+    }
+  }
+
+  const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+  if (!clientEmail || !privateKey) {
+    throw new Error('Google service account credentials are not configured');
+  }
+
+  return {
+    type: 'service_account',
+    client_email: clientEmail,
+    private_key: privateKey.replace(/\\n/g, '\n')
+  };
+}
 
 // ── TWILIO WHATSAPP INTEGRATION ──
 async function sendWhatsAppViaTwilio(toPhone, message) {
