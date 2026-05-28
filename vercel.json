@@ -1,19 +1,12 @@
 {
+  "framework": "express",
   "buildCommand": "npm install",
   "devCommand": "node server.js",
   "installCommand": "npm install",
-  "framework": "nodejs",
-  "functions": {
-    "server.js": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
   "env": {
     "TWILIO_ACCOUNT_SID": "@twilio_account_sid",
     "TWILIO_AUTH_TOKEN": "@twilio_auth_token",
     "TWILIO_WHATSAPP_NUMBER": "@twilio_whatsapp_number",
-    "WHATSAPP_BUSINESS_API_TOKEN": "@whatsapp_business_api_token",
-    "WHATSAPP_PHONE_ID": "@whatsapp_phone_id"
+    "ADMIN_WHATSAPP_NUMBER": "@admin_whatsapp_number"
   }
 }
