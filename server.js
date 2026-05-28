@@ -55,22 +55,26 @@ app.post('/api/submit-enquiry', async (req, res) => {
     };
     submissions.push(submission);
 
-    // Send WhatsApp message via Twilio (if configured)
+    // Get admin number from environment or use default
+    const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER || '+919092430052';
+
+    // Send WhatsApp message to ADMIN with enquiry details
     if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-      await sendWhatsAppViaTwilio(phone, formatWhatsAppMessage(req.body));
+      await sendWhatsAppViaTwilio(adminPhone, formatWhatsAppMessage(req.body));
     }
 
     // Optionally send WhatsApp via WhatsApp Business API
     if (process.env.WHATSAPP_BUSINESS_API_TOKEN && process.env.WHATSAPP_PHONE_ID) {
-      await sendWhatsAppViaBusinessAPI(phone, formatWhatsAppMessage(req.body));
+      await sendWhatsAppViaBusinessAPI(adminPhone, formatWhatsAppMessage(req.body));
     }
 
     // Log to console
     console.log('✅ Enquiry received:', submission);
+    console.log('📱 WhatsApp message sent to admin:', adminPhone);
 
     res.json({
       success: true,
-      message: 'Enquiry submitted successfully! You will receive a WhatsApp message shortly.',
+      message: 'Enquiry submitted successfully! Admin will be notified via WhatsApp.',
       submissionId: submission.id
     });
 
