@@ -581,7 +581,7 @@
 
   <!-- ══ PAGE 4: A BIT ABOUT YOU ══ -->
   <div class="page" id="page-4">
-    <div class="q-label">Question 3 of 5</div>
+    <div class="q-label">Question 3 of 6</div>
     <h2 class="q-title">A bit about you</h2>
     <p class="q-hint">Helps Prateek personalise your plan from the start.</p>
     <div class="input-row" style="margin-bottom:20px">
@@ -610,13 +610,39 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 5: MESSAGE ══ -->
+  <!-- ══ PAGE 5: GOAL SELECTION ══ -->
   <div class="page" id="page-5">
-    <div class="q-label">Question 4 of 5</div>
-    <h2 class="q-title">What can we help you with? 💬</h2>
-    <p class="q-hint">Tell us about your enquiry in a few words.</p>
-    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
-    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="q-label">Question 4 of 6</div>
+    <h2 class="q-title">What's your #1 goal right now?</h2>
+    <p class="q-hint">Pick the one that matters most to you.</p>
+    <div class="chips" id="goal-chips">
+      <div class="chip" onclick="selectChip('goal', this)" data-val="fat-loss">
+        <div class="chip-key">A</div>
+        <span class="chip-emoji">🔥</span>
+        <span>Lose Fat & Get Lean</span>
+      </div>
+      <div class="chip" onclick="selectChip('goal', this)" data-val="muscle">
+        <div class="chip-key">B</div>
+        <span class="chip-emoji">💪</span>
+        <span>Build Muscle & Size</span>
+      </div>
+      <div class="chip" onclick="selectChip('goal', this)" data-val="strength">
+        <div class="chip-key">C</div>
+        <span class="chip-emoji">🏋️</span>
+        <span>Get Stronger on Big Lifts</span>
+      </div>
+      <div class="chip" onclick="selectChip('goal', this)" data-val="posture">
+        <div class="chip-key">D</div>
+        <span class="chip-emoji">🧍</span>
+        <span>Fix My Posture & Form</span>
+      </div>
+      <div class="chip" onclick="selectChip('goal', this)" data-val="coaching">
+        <div class="chip-key">E</div>
+        <span class="chip-emoji">📱</span>
+        <span>1-on-1 Online Coaching</span>
+      </div>
+    </div>
+    <div class="err-msg" id="err-goal">Please select your goal</div>
     <div class="btn-actions">
       <button class="btn-next" onclick="validateAndGo(5, 6)">
         Next
@@ -626,9 +652,25 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 6: COMPANY ══ -->
+  <!-- ══ PAGE 6: MESSAGE ══ -->
   <div class="page" id="page-6">
-    <div class="q-label">Question 5 of 5</div>
+    <div class="q-label">Question 5 of 6</div>
+    <h2 class="q-title">What can we help you with? 💬</h2>
+    <p class="q-hint">Tell us about your enquiry in a few words.</p>
+    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
+    <div class="err-msg" id="err-message">Please enter your message</div>
+    <div class="btn-actions">
+      <button class="btn-next" onclick="validateAndGo(6, 7)">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn-back" onclick="goTo(5)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 7: COMPANY ══ -->
+  <div class="page" id="page-7">
+    <div class="q-label">Question 6 of 6</div>
     <h2 class="q-title">Any additional details? 🏢</h2>
     <p class="q-hint">Company name, location, or anything else that helps us serve you better.</p>
     <input class="input-field" id="inp-company" type="text" placeholder="e.g. Your Company Name (Optional)">
@@ -636,12 +678,12 @@
       <button class="btn-next" onclick="submitForm()" id="submitBtn" style="background:var(--accent);min-width:180px">
         Submit Enquiry ✓
       </button>
-      <button class="btn-back" onclick="goTo(5)">← Back</button>
+      <button class="btn-back" onclick="goTo(6)">← Back</button>
     </div>
   </div>
 
-  <!-- ══ PAGE 7: THANK YOU ══ -->
-  <div class="page" id="page-7">
+  <!-- ══ PAGE 8: THANK YOU ══ -->
+  <div class="page" id="page-8">
     <div class="thankyou-icon">✅</div>
     <h2 class="thankyou-title">Thank You!</h2>
     <p class="thankyou-msg">
@@ -674,7 +716,7 @@
 </div><!-- /shell -->
 
 <script>
-  const TOTAL_PAGES = 5;
+  const TOTAL_PAGES = 6;
   let currentPage = 1;
 
   const state = {
@@ -684,6 +726,7 @@
     age: '',
     city: '',
     gender: '',
+    goal: '',
     message: '',
     company: ''
   };
@@ -700,16 +743,16 @@
   }
 
   function updateProgress() {
-    const pct = currentPage === 7 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
+    const pct = currentPage === 8 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
   }
 
   function updateCounter() {
     const el = document.getElementById('pageCounter');
-    if (currentPage === 1 || currentPage === 7) {
+    if (currentPage === 1 || currentPage === 8) {
       el.textContent = '';
     } else {
-      el.textContent = 'Question ' + (currentPage - 1) + ' of 5';
+      el.textContent = 'Question ' + (currentPage - 1) + ' of 6';
     }
   }
 
@@ -740,6 +783,9 @@
       if (!state.gender) { showErr('gender'); valid = false; }
     }
     if (from === 5) {
+      if (!state.goal) { showErr('goal'); valid = false; }
+    }
+    if (from === 6) {
       const v = document.getElementById('inp-message').value.trim();
       if (!v) { showErr('message'); valid = false; }
       else state.message = v;
@@ -753,6 +799,15 @@
     if (el) el.classList.add('show');
     const inp = document.getElementById('inp-' + id);
     if (inp) inp.classList.add('error');
+  }
+
+  function selectChip(group, el) {
+    const parent = el.parentElement;
+    parent.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    state[group] = el.dataset.val;
+    const err = document.getElementById('err-' + group);
+    if (err) err.classList.remove('show');
   }
 
   function selectRadio(group, el) {
@@ -798,7 +853,7 @@
       const data = await response.json();
 
       if (response.ok) {
-        goTo(7);
+        goTo(8);
       } else {
         alert('Error: ' + (data.error || 'Failed to submit enquiry'));
         submitBtn.disabled = false;
