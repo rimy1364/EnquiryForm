@@ -1,17 +1,15 @@
 {
-  "framework": "express",
-  "buildCommand": "npm install",
-  "devCommand": "node server.js",
-  "installCommand": "npm install",
-  "env": {
-    "TWILIO_ACCOUNT_SID": "",
-    "TWILIO_AUTH_TOKEN": "",
-    "TWILIO_WHATSAPP_NUMBER": "",
-    "ADMIN_WHATSAPP_NUMBER": "",
-    "GOOGLE_SHEET_ID": "",
-    "GOOGLE_SHEET_NAME": "",
-    "GOOGLE_SERVICE_ACCOUNT_KEY": "",
-    "GOOGLE_SERVICE_ACCOUNT_EMAIL": "",
-    "GOOGLE_PRIVATE_KEY": ""
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ]
 }
