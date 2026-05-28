@@ -561,13 +561,15 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 3: WHATSAPP ══ -->
+  <!-- ══ PAGE 3: CONTACT DETAILS ══ -->
   <div class="page" id="page-3">
-    <div class="q-label">Question 2 of 5</div>
-    <h2 class="q-title">Your WhatsApp number? 📱</h2>
-    <p class="q-hint">We'll send you a message here once we receive your enquiry.</p>
-    <input class="input-field" id="inp-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel">
+    <div class="q-label">Question 2 of 4</div>
+    <h2 class="q-title">Your contact details</h2>
+    <p class="q-hint">Provide your WhatsApp number and email so we can reach you quickly.</p>
+    <input class="input-field" id="inp-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel" style="margin-bottom:16px;">
     <div class="err-msg" id="err-phone">Please enter a valid WhatsApp number</div>
+    <input class="input-field" id="inp-email" type="email" placeholder="your.email@example.com" autocomplete="email">
+    <div class="err-msg" id="err-email">Please enter a valid email</div>
     <div class="btn-actions">
       <button class="btn-next" onclick="validateAndGo(3, 4)">
         Next
@@ -577,13 +579,13 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 4: EMAIL ══ -->
+  <!-- ══ PAGE 4: MESSAGE ══ -->
   <div class="page" id="page-4">
-    <div class="q-label">Question 3 of 5</div>
-    <h2 class="q-title">Your Email Address 📧</h2>
-    <p class="q-hint">In case we need to reach you via email.</p>
-    <input class="input-field" id="inp-email" type="email" placeholder="your.email@example.com" autocomplete="email">
-    <div class="err-msg" id="err-email">Please enter a valid email</div>
+    <div class="q-label">Question 3 of 4</div>
+    <h2 class="q-title">What can we help you with? 💬</h2>
+    <p class="q-hint">Tell us about your enquiry in a few words.</p>
+    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
+    <div class="err-msg" id="err-message">Please enter your message</div>
     <div class="btn-actions">
       <button class="btn-next" onclick="validateAndGo(4, 5)">
         Next
@@ -593,25 +595,9 @@
     </div>
   </div>
 
-  <!-- ══ PAGE 5: MESSAGE ══ -->
+  <!-- ══ PAGE 5: COMPANY ══ -->
   <div class="page" id="page-5">
-    <div class="q-label">Question 4 of 5</div>
-    <h2 class="q-title">What can we help you with? 💬</h2>
-    <p class="q-hint">Tell us about your enquiry in a few words.</p>
-    <textarea class="input-field" id="inp-message" placeholder="Describe your enquiry or what you'd like to discuss..."></textarea>
-    <div class="err-msg" id="err-message">Please enter your message</div>
-    <div class="btn-actions">
-      <button class="btn-next" onclick="validateAndGo(5, 6)">
-        Next
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
-      <button class="btn-back" onclick="goTo(4)">← Back</button>
-    </div>
-  </div>
-
-  <!-- ══ PAGE 6: COMPANY ══ -->
-  <div class="page" id="page-6">
-    <div class="q-label">Question 5 of 5</div>
+    <div class="q-label">Question 4 of 4</div>
     <h2 class="q-title">Any additional details? 🏢</h2>
     <p class="q-hint">Company name, location, or anything else that helps us serve you better.</p>
     <input class="input-field" id="inp-company" type="text" placeholder="e.g. Your Company Name (Optional)">
@@ -619,12 +605,12 @@
       <button class="btn-next" onclick="submitForm()" id="submitBtn" style="background:var(--accent);min-width:180px">
         Submit Enquiry ✓
       </button>
-      <button class="btn-back" onclick="goTo(5)">← Back</button>
+      <button class="btn-back" onclick="goTo(4)">← Back</button>
     </div>
   </div>
 
-  <!-- ══ PAGE 7: THANK YOU ══ -->
-  <div class="page" id="page-7">
+  <!-- ══ PAGE 6: THANK YOU ══ -->
+  <div class="page" id="page-6">
     <div class="thankyou-icon">✅</div>
     <h2 class="thankyou-title">Thank You!</h2>
     <p class="thankyou-msg">
@@ -657,7 +643,7 @@
 </div><!-- /shell -->
 
 <script>
-  const TOTAL_PAGES = 5;
+  const TOTAL_PAGES = 4;
   let currentPage = 1;
 
   const state = {
@@ -680,16 +666,16 @@
   }
 
   function updateProgress() {
-    const pct = currentPage === 7 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
+    const pct = currentPage === 6 ? 100 : ((currentPage - 1) / TOTAL_PAGES) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
   }
 
   function updateCounter() {
     const el = document.getElementById('pageCounter');
-    if (currentPage === 1 || currentPage === 7) {
+    if (currentPage === 1 || currentPage === 6) {
       el.textContent = '';
     } else {
-      el.textContent = 'Question ' + (currentPage - 1) + ' of 5';
+      el.textContent = 'Question ' + (currentPage - 1) + ' of 4';
     }
   }
 
@@ -703,16 +689,14 @@
       else state.name = v;
     }
     if (from === 3) {
-      const v = document.getElementById('inp-phone').value.trim();
-      if (!v || v.length < 7) { showErr('phone'); valid = false; }
-      else state.phone = v;
+      const phoneValue = document.getElementById('inp-phone').value.trim();
+      const emailValue = document.getElementById('inp-email').value.trim();
+      if (!phoneValue || phoneValue.length < 7) { showErr('phone'); valid = false; }
+      else state.phone = phoneValue;
+      if (!emailValue || !emailValue.includes('@')) { showErr('email'); valid = false; }
+      else state.email = emailValue;
     }
     if (from === 4) {
-      const v = document.getElementById('inp-email').value.trim();
-      if (!v || !v.includes('@')) { showErr('email'); valid = false; }
-      else state.email = v;
-    }
-    if (from === 5) {
       const v = document.getElementById('inp-message').value.trim();
       if (!v) { showErr('message'); valid = false; }
       else state.message = v;
