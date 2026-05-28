@@ -93,16 +93,23 @@ app.post('/api/submit-enquiry', async (req, res) => {
     ]);
 
     const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER || '+919092430052';
+    console.log('📱 Admin phone:', adminPhone);
+    console.log('🔑 Twilio SID present:', !!process.env.TWILIO_ACCOUNT_SID);
+    console.log('🔑 Twilio token present:', !!process.env.TWILIO_AUTH_TOKEN);
+    console.log('📞 Twilio WA number:', process.env.TWILIO_WHATSAPP_NUMBER);
+
     if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-      await sendWhatsAppViaTwilio(adminPhone, formatWhatsAppMessage(submission));
-    }
-    if (process.env.WHATSAPP_BUSINESS_API_TOKEN && process.env.WHATSAPP_PHONE_ID) {
-      await sendWhatsAppViaBusinessAPI(adminPhone, formatWhatsAppMessage(submission));
+      try {
+        await sendWhatsAppViaTwilio(adminPhone, formatWhatsAppMessage(submission));
+        console.log('✅ WhatsApp sent via Twilio');
+      } catch (waError) {
+        console.error('❌ Twilio WhatsApp failed:', waError.response?.data || waError.message);
+      }
+    } else {
+      console.log('⚠️ Twilio not configured, skipping WhatsApp');
     }
 
-    console.log('✅ Enquiry received:', submission);
-    console.log('📊 Saved enquiry to Google Sheets:', process.env.GOOGLE_SHEET_ID);
-    console.log('📱 WhatsApp message sent to admin:', adminPhone);
+    console.log('✅ Enquiry received:', submission.id);
 
     res.json({
       success: true,
